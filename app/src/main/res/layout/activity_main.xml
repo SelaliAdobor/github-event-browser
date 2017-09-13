@@ -117,4 +117,18 @@
         app:layout_constraintLeft_toLeftOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/event_type_spinner" />
 
+    <TextView
+        android:id="@+id/error_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/event_recycler_view"
+        app:layout_constraintLeft_toLeftOf="@+id/event_recycler_view"
+        app:layout_constraintRight_toRightOf="@+id/event_recycler_view"
+        app:layout_constraintTop_toTopOf="@+id/event_recycler_view" />
+
 </android.support.constraint.ConstraintLayout>
