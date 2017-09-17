@@ -33,6 +33,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="text"
+        android:text="best-resume-ever"
         android:hint="Repository"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/guideline"
@@ -58,6 +59,7 @@
         android:ems="10"
         android:inputType="text"
         android:hint="Owner"
+        android:text="salomonelli"
         app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintLeft_toLeftOf="@+id/guideline"
         app:layout_constraintRight_toLeftOf="@+id/guideline3"
@@ -79,8 +81,8 @@
         app:ms_enableFloatingLabel="true"
         app:ms_hint="Event Type" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/event_recycler_view"
+    <com.facebook.litho.LithoView
+        android:id="@+id/event_listing_lithoView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
@@ -102,10 +104,10 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/event_recycler_view"
-        app:layout_constraintLeft_toLeftOf="@+id/event_recycler_view"
-        app:layout_constraintRight_toRightOf="@+id/event_recycler_view"
-        app:layout_constraintTop_toTopOf="@+id/event_recycler_view" />
+        app:layout_constraintBottom_toBottomOf="@+id/event_listing_lithoView"
+        app:layout_constraintLeft_toLeftOf="@+id/event_listing_lithoView"
+        app:layout_constraintRight_toRightOf="@+id/event_listing_lithoView"
+        app:layout_constraintTop_toTopOf="@+id/event_listing_lithoView" />
 
     <Button
         android:id="@+id/search_button"
@@ -126,9 +128,12 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/event_recycler_view"
-        app:layout_constraintLeft_toLeftOf="@+id/event_recycler_view"
-        app:layout_constraintRight_toRightOf="@+id/event_recycler_view"
-        app:layout_constraintTop_toTopOf="@+id/event_recycler_view" />
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/event_listing_lithoView"
+        app:layout_constraintLeft_toLeftOf="@+id/event_listing_lithoView"
+        app:layout_constraintRight_toRightOf="@+id/event_listing_lithoView"
+        app:layout_constraintTop_toTopOf="@+id/event_listing_lithoView" />
 
 </android.support.constraint.ConstraintLayout>

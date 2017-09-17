@@ -2,6 +2,7 @@ package com.selaliadobor.githubeventbrowser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.selaliadobor.githubeventbrowser.githubapi.responseobjects.Event;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class GithubAPITests {
         byte[] mockResponse = IOUtils.readFully(mockResponseStream, mockResponseStream.available());
 
         Gson gson = new GsonBuilder()
-                .registerTypeAdapterFactory(GsonTypeAdaptorFactory.create())
+                .registerTypeAdapterFactory(GsonTypeAdapterFactory.create())
                 .create();
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
