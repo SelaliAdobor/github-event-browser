@@ -16,16 +16,30 @@ import com.facebook.yoga.YogaEdge;
 import com.github.pavlospt.litho.glide.GlideImage;
 import com.selaliadobor.githubeventbrowser.githubapi.responseobjects.Event;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import static humanize.Humanize.naturalTime;
+
 /**
  * Defines a layout for displaying Github Events
  */
 @LayoutSpec
 public class EventListItemLayoutSpec {
 
+    public static final SimpleDateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+    public static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+
     @OnCreateLayout
     static ComponentLayout onCreateLayout(
             ComponentContext c,
             @Prop Event event) {
+        String eventCreationDate = getReadableEventCreationDate(event);
+
         ComponentLayout textColumn = Column.create(c)
                 .marginDip(YogaEdge.LEFT, 16)
                 .child(
@@ -37,7 +51,7 @@ public class EventListItemLayoutSpec {
                 )
                 .child(
                         Text.create(c)
-                                .text(event.createdAt())
+                                .text(eventCreationDate)
                                 .textSizeSp(14)
                 )
                 .widthPercent(60)
@@ -69,5 +83,15 @@ public class EventListItemLayoutSpec {
                 )
                 .child(textColumn)
                 .build();
+    }
+
+    private static String getReadableEventCreationDate(@Prop Event event) {
+        try {
+            ISO_DATE_FORMAT.setTimeZone(UTC);
+            Date parsedDate = ISO_DATE_FORMAT.parse(event.createdAt());
+            return naturalTime(parsedDate);
+        } catch (ParseException e) {
+            return event.createdAt() ;
+        }
     }
 }
