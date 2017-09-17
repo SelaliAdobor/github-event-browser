@@ -1,9 +1,11 @@
 package com.selaliadobor.githubeventbrowser;
 
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.OrientationHelper;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -15,12 +17,15 @@ import com.facebook.litho.LithoView;
 import com.facebook.litho.widget.LinearLayoutInfo;
 import com.facebook.litho.widget.Recycler;
 import com.facebook.litho.widget.RecyclerBinder;
+import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import com.selaliadobor.githubeventbrowser.eventsource.GithubEventSource;
 import com.selaliadobor.githubeventbrowser.eventsource.RetrofitGithubEventSource;
 import com.selaliadobor.githubeventbrowser.githubapi.responseobjects.Event;
+import com.selaliadobor.githubeventbrowser.layout.EventListItemLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +33,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import fr.ganfra.materialspinner.MaterialSpinner;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+
+import java8.util.stream.Collectors;
+import java8.util.stream.StreamSupport;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -49,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     EditText ownerEditText;
     @BindView(R.id.repository_edit_text)
     EditText repositoryEditText;
+    @BindView(R.id.event_type_spinner)
+    MaterialSpinner filterSpinner;
 
     CompositeDisposable lifecycleDisposables = new CompositeDisposable();
 
@@ -59,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     private ComponentContext componentContext;
     private GithubEventSource githubEventSource;
     private Disposable listEventsDisposable;
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -119,12 +129,12 @@ public class MainActivity extends AppCompatActivity {
         lifecycleDisposables.add(
             RxView
                 .clicks(searchButton)
-                .subscribe(o -> updateEventListing())
+                .subscribe(o -> updateEventListing(), Throwable::printStackTrace)
         );
     }
 
     private void updateEventListing() {
-        List<Event> events = new ArrayList<>();
+        ArrayList<Event> eventList = new ArrayList<>();
 
         if(listEventsDisposable != null && !listEventsDisposable.isDisposed()){
             listEventsDisposable.dispose();
@@ -136,14 +146,34 @@ public class MainActivity extends AppCompatActivity {
                     setViewVisibility(ContentStatus.LOADING);
                 })
                 .subscribe(
-                        events::add,
+                        eventList::add,
                         this::showError,
-                        () -> {
-                            setViewVisibility(ContentStatus.CONTENT);
-                            updateRecyclerContent(events);
-                        }
+                        () -> showEvents(eventList)
                 );
         lifecycleDisposables.add(listEventsDisposable);
+    }
+
+    private void showEvents(ArrayList<Event> eventList) {
+        setViewVisibility(ContentStatus.CONTENT);
+
+        updateRecyclerContent(eventList,null);
+
+        List<String> uniqueEventTypes = StreamSupport
+                .stream(eventList)
+                .map(Event::type)
+                .distinct()
+                .collect(Collectors.toList());
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, uniqueEventTypes);
+        filterSpinner.setAdapter(adapter);
+
+        lifecycleDisposables.add(
+                RxAdapterView.itemSelections(filterSpinner)
+                        .filter(index -> index > 0) //An unselected spinner has an index of -1
+                        .map(uniqueEventTypes::get)
+                        .subscribe(eventType ->
+                                updateRecyclerContent(eventList, event -> event.type().equals(eventType)))
+        );
     }
 
     private void setViewVisibility(ContentStatus status) {
@@ -155,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
         int contentVisibility = status == ContentStatus.CONTENT ? View.VISIBLE : View.INVISIBLE;
         eventLithoView.setVisibility(contentVisibility);
+        filterSpinner.setVisibility(contentVisibility);
     }
 
     private void showError(Throwable throwable) {
@@ -162,18 +193,23 @@ public class MainActivity extends AppCompatActivity {
         errorTextView.setText("Error: " + throwable.getMessage());
     }
 
-    private void updateRecyclerContent(List<Event> events) {
+    private void updateRecyclerContent(List<Event> events, EventFilter eventFilter) {
         List<Component<EventListItemLayout>> listItems = new ArrayList<>();
-        for(Event event:events){
+        for(Event event : events){
+
+            if(eventFilter != null && !eventFilter.isValidEvent(event)){
+                 continue;
+            }
+
             Component<EventListItemLayout> layoutComponent = EventListItemLayout
                     .create(componentContext)
-                    .heightDip(50)
+
                     .event(event)
                     .build();
             listItems.add(layoutComponent);
         }
         recyclerBinder.removeRangeAt(0, recyclerBinder.getItemCount());
-        for(int i = 0; i < events.size(); i++){
+        for(int i = 0; i < listItems.size(); i++){
             recyclerBinder.insertItemAt(i,listItems.get(i));
         }
     }
