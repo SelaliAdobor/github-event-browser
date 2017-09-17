@@ -64,18 +64,22 @@ dependencies {
     provided "com.google.auto.value:auto-value:1.5"
     annotationProcessor "com.google.auto.value:auto-value:1.5"
 
-    provided "com.ryanharter.auto.value:auto-value-gson:0.5.0"
-    annotationProcessor "com.ryanharter.auto.value:auto-value-gson:0.5.0"
+    def autoGsonVersion = '0.5.0'
+    provided "com.ryanharter.auto.value:auto-value-gson:$autoGsonVersion"
+    annotationProcessor "com.ryanharter.auto.value:auto-value-gson:$autoGsonVersion"
 
     compile "com.squareup.okhttp3:okhttp:3.9.0"
 
     testCompile "commons-io:commons-io:2.5"
 
-    annotationProcessor "com.facebook.litho:litho-processor:0.6.1"
-    provided "com.facebook.litho:litho-annotations:0.6.1"
-    compile "com.facebook.litho:litho-core:0.6.1"
-    compile "com.facebook.litho:litho-widget:0.6.1"
+    def lithoVersion = '0.6.1'
+    annotationProcessor "com.facebook.litho:litho-processor:$lithoVersion"
+    provided "com.facebook.litho:litho-annotations:$lithoVersion"
+    compile "com.facebook.litho:litho-core:$lithoVersion"
+    compile "com.facebook.litho:litho-widget:$lithoVersion"
     compile "com.facebook.soloader:soloader:0.2.0"
     compile "com.github.pavlospt:litho-glide:1.0"
 
+
+    compile "net.sourceforge.streamsupport:streamsupport:1.5.6"
 }
