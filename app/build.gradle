@@ -30,8 +30,8 @@ android {
     }
 }
 
-
 repositories {
+    maven {url "https://clojars.org/repo/"}
     mavenCentral()
 }
 
@@ -82,4 +82,11 @@ dependencies {
 
 
     compile "net.sourceforge.streamsupport:streamsupport:1.5.6"
+
+    compile "com.github.mfornos:humanize-slim:1.2.2"
+
+    def icepickVersion = '3.2.0'
+    compile "frankiesardo:icepick:$icepickVersion"
+    provided "frankiesardo:icepick-processor:$icepickVersion"
+
 }
