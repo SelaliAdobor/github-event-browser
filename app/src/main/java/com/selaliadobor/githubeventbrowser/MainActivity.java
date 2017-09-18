@@ -1,7 +1,8 @@
 package com.selaliadobor.githubeventbrowser;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.OrientationHelper;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -36,7 +37,6 @@ import icepick.Icepick;
 import icepick.State;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
 import okhttp3.Cache;
@@ -47,6 +47,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final int RETROFIT_CACHE_SIZE = 20 * 1024 * 1024; //20MB
     @State
     public String lastSearchedUsername;
     @State
@@ -107,11 +109,24 @@ public class MainActivity extends AppCompatActivity {
 
         eventLoadingProgressBar.setVisibility(View.GONE);
 
+        Retrofit retrofit = getRetrofitInstance();
+
+        githubEventSource = new RetrofitGithubEventSource(retrofit);
+
+        setupViews();
+        if (lastSearchedUsername != null && lastSearchedRepository != null) {
+            startSearch(lastSearchedUsername, lastSearchedRepository);
+        }
+    }
+
+    @NonNull
+    private Retrofit getRetrofitInstance() {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapterFactory(GsonTypeAdapterFactory.create())
                 .create();
-        int cacheSize = 10 * 1024 * 1024; // 10 MB
-        Cache cache = new Cache(getCacheDir(), cacheSize);
+
+
+        Cache cache = new Cache(getCacheDir(), RETROFIT_CACHE_SIZE);
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .cache(cache)
@@ -121,19 +136,12 @@ public class MainActivity extends AppCompatActivity {
                                 .build()))
                 .build();
 
-        Retrofit retrofit = new Retrofit.Builder()
+        return new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
-
-        githubEventSource = new RetrofitGithubEventSource(retrofit);
-
-        setupViews();
-        if (lastSearchedUsername != null && lastSearchedRepository != null) {
-            startSearch(lastSearchedUsername, lastSearchedRepository);
-        }
     }
 
     @Override
@@ -258,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    enum ContentStatus {
+    private enum ContentStatus {
         NONE,
         LOADING,
         CONTENT,

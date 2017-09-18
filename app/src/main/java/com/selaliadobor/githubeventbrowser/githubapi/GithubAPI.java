@@ -16,11 +16,11 @@ public interface GithubAPI {
 
     /**
      * Returns a list of events for the given repo and page
-     * @param owner The user who owns the repository
-     * @param repo The name of the repository
+     *
+     * @param owner     The user who owns the repository
+     * @param repo      The name of the repository
      * @param pageIndex A page index used with pagination. Should not be greater than 10 (See notes)
      * @return A list of events for the repository
-     *
      * @implNote Github's API limits pagination for events to 10 pages for performance reasons
      */
     @GET("repos/{owner}/{repo}/events")

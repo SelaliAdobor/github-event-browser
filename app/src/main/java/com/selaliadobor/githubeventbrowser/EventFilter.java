@@ -3,9 +3,12 @@ package com.selaliadobor.githubeventbrowser;
 import com.selaliadobor.githubeventbrowser.githubapi.responseobjects.Event;
 
 /**
- * Created by selaliadobor on 9/17/17.
+ * Defines a predicate that is used to filter Events shown to the user
  */
 
 public interface EventFilter {
+    /**
+     * @implSpec Implementations should return true if the event should be shown to the user, false otherwise
+     */
     boolean isValidEvent(Event event);
 }

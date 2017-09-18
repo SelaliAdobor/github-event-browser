@@ -50,7 +50,7 @@ public class RetrofitGithubEventSource implements GithubEventSource {
     }
 
     /**
-     *  Recursively calls GitHub API with consecutive page numbers, adding events found to a PublishSubject
+     * Recursively calls GitHub API with consecutive page numbers, adding events found to a PublishSubject
      */
     private void listRepoEvents(String name, String repo, final PublishSubject<Event> eventPublishSubject, final int startingPage) {
         githubAPI.listEvents(name, repo, startingPage)
