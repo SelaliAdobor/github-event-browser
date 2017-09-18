@@ -46,7 +46,7 @@ public abstract class Event {
      * A generic payload field containing different data depending on the event type
      */
     @SerializedName("payload")
-    public abstract Map<String,Object> payload();
+    public abstract Map<String, Object> payload();
 
     public static TypeAdapter<Event> typeAdapter(Gson gson) {
         return new AutoValue_Event.GsonTypeAdapter(gson);

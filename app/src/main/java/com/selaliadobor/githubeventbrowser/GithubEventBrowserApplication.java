@@ -9,6 +9,6 @@ public class GithubEventBrowserApplication extends Application {
     public void onCreate() {
         super.onCreate();
         //Initializes Litho
-        SoLoader.init(this,false);
+        SoLoader.init(this, false);
     }
 }

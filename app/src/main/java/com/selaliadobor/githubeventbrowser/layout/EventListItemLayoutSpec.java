@@ -16,7 +16,6 @@ import com.facebook.yoga.YogaEdge;
 import com.github.pavlospt.litho.glide.GlideImage;
 import com.selaliadobor.githubeventbrowser.githubapi.responseobjects.Event;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -67,7 +66,7 @@ public class EventListItemLayoutSpec {
                                         GlideImage.create(c)
                                                 .imageUrl(event.actor().avatarUrl())
                                                 .withLayout()
-                                                .marginDip(YogaEdge.ALL,1)
+                                                .marginDip(YogaEdge.ALL, 1)
                                                 .flexGrow(1)
                                                 .heightPercent(70)
                                 )
@@ -91,7 +90,7 @@ public class EventListItemLayoutSpec {
             Date parsedDate = ISO_DATE_FORMAT.parse(event.createdAt());
             return naturalTime(parsedDate);
         } catch (ParseException e) {
-            return event.createdAt() ;
+            return event.createdAt();
         }
     }
 }
